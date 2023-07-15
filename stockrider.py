@@ -35,6 +35,7 @@ layers = [
 ]
 lines = []
 
+# Get the price data from yahoo finance
 def stock_plots(ticker='aapl', from_date='2020-01-01', to_date='2020-01-30', x_inc=150, y_mult=40):
     data = yf.download(ticker, from_date, to_date)
     open_close = data[['Open', 'Close']].reset_index(drop=True).values
@@ -46,10 +47,11 @@ def stock_plots(ticker='aapl', from_date='2020-01-01', to_date='2020-01-30', x_i
         counter = counter + x_inc
     return plots
 
-plots = stock_plots(ticker='tsla', from_date='2020-01-01', to_date='2022-01-01', x_inc=150, y_mult=20)
+plots = stock_plots(ticker='nvda', from_date='2021-01-01', to_date='2023-01-01', x_inc=150, y_mult=20)
 
+# Smoothen price data plot
+# O+C/2 [n][3] + [n+1][1] / 2
 def smooth_plots(plots):
-    # O+C/2 [n][3] + [n+1][1] / 2
     counter = 0
     for plot in plots:
         if counter != len(plots)-1:
@@ -60,6 +62,7 @@ def smooth_plots(plots):
 
 plots = smooth_plots(plots)
 
+# Build array of plots
 def stage_lines(plots):
     lines = []
     counter = 0
@@ -81,6 +84,7 @@ def stage_lines(plots):
 
 lines = stage_lines(plots)
 
+# Save lines array into a game file
 def save_track(label= label,
                creator= creator,
                description= description,
@@ -118,5 +122,4 @@ def save_track(label= label,
     with open(filename, 'w') as outfile:
         json.dump(track, outfile)
 
-save_track(lines=lines, filename='smooth.track.json')
-
+save_track(lines=lines, filename='track.json')
